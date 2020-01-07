@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="author" content="Tiago R. Diana">
+    <meta name="description" content="Ordem de Serviço">
+    <meta name="copyright" content="© 2019 Tiago Roberto Diana" />
+
+    <title>Ordem de Serviço</title>
+    <link rel="shortcut icon" href="image/logo-icone.png">
+
+    <link rel="stylesheet" type="text/css" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/menu.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/main.css">
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/menu.js"></script>
+    <!-- CODELAB: Add link rel manifest -->
+    <link rel="manifest" href="manifest.json">
+    <!-- CODELAB: Add meta theme-color -->
+    <meta name="theme-color" content="#222222" />
+    <script src="app.js"></script>
+    <script>
+        $(document).ready(function(){
+
+            //Botão Buscar
+            $('input[name=buscar]').click(function(){
+                var nome = $('#nome').val()
+                var cpf = $('#cpf').val()
+                //Codigo AJAX
+                $.ajax({
+                    url: "http://localhost/osapp/server/webservice.php",
+                    method: "post",
+                    data:{
+                        'tipo':'buscar_user',
+                        'nome': nome,
+                        'cpf' : cpf
+                    },
+                    success: function(retorno){
+                        var dados = JSON.parse(retorno);
+                        if(dados != null){
+                            console.log(dados)
+                            $('#id').val(dados.id)
+                            $('#nome').val(dados.nome)
+                            $('#cpf').val(dados.cpf)
+                            $('#telefone').prop('disabled', false).val(dados.telefone)
+                            $('#celular').prop('disabled', false).val(dados.celular)
+                            $('#rua').prop('disabled', false).val(dados.rua)
+                            $('#bairro').prop('disabled', false).val(dados.bairro)
+                            $('#cidade').prop('disabled', false).val(dados.cidade)
+                            $('#estado').prop('disabled', false).val(dados.estado)
+                            $('#cep').prop('disabled', false).val(dados.CEP)
+                            $('input[name=buscar]').hide('fast')
+                            $('input[name=alterar]').show('fast')
+                            $('input[name=voltar]').show('fast')
+                        }
+                        else{
+                            $('#nao_encontrada').slideDown()
+                            setTimeout(function(){
+                                $('#nao_encontrada').slideUp()
+                            },1500)
+                        }
+
+                        //Listando Ordem de serviço do usuario
+                    },
+                    timeout:3000,
+                    error: function () {
+                        $('#erro').slideDown()
+                        setTimeout(function(){
+                            $('#erro').slideUp()
+                        },2500)
+                    }
+                })
+            })
+
+            //Botão Alterar
+            $('input[name=alterar]').click(function () {
+                var id = $('#id').val()
+                var nome = $('#nome').val()
+                var cpf = $('#cpf').val()
+                var tel = $('#telefone').val()
+                var cel = $('#celular').val()
+                var rua = $('#rua').val()
+                var bairro = $('#bairro').val()
+                var cidade = $('#cidade').val()
+                var estado = $('#estado').val()
+                var cep = $('#cep').val()
+                //AJAX
+                $.ajax({
+                    url:'http://localhost/osapp/server/webservice.php',
+                    method: 'post',
+                    data:{
+                        'tipo': 'alterar_user',
+                        'id' : id,
+                        'nome': nome,
+                        'cpf': cpf,
+                        'telefone': tel,
+                        'celular': cel,
+                        'rua': rua,
+                        'bairro': bairro,
+                        'cidade': cidade,
+                        'estado': estado,
+                        'cep': cep
+                    },
+                    success:function(retorno){
+                        $('#alterado').slideDown()
+                            setTimeout(function(){
+                                $('#alterado').slideUp()
+                            },1500)
+
+                    },
+                    timeout: 3000,
+                    error: function(){
+                        $('#erro').slideDown()
+                            setTimeout(function(){
+                                $('#erro').slideUp()
+                            },1500)
+                    }
+                })
+
+            })
+
+            //BOTAO VOLTAR
+            $('input[name=voltar]').click(function(){
+                $('#id').val("")
+                $('#nome').val("")
+                $('#cpf').val("")
+                $('#telefone').prop('disabled', true).val("")
+                $('#celular').prop('disabled', true).val("")
+                $('#rua').prop('disabled', true).val("")
+                $('#bairro').prop('disabled', true).val("")
+                $('#cidade').prop('disabled', true).val("")
+                $('#estado').prop('disabled', true).val("")
+                $('#cep').prop('disabled', true).val("")
+                $('input[name=buscar]').show('fast')
+                $('input[name=alterar]').hide('fast')
+                $('input[name=voltar]').hide('fast')
+            })
+        })
+    </script>
+
+</head>
+<body>
+<main>
+<!-- MENU MOBILE -->
+<input type="checkbox" id="checkmenu">
+<label for="checkmenu" id="icone-mobile"><img src="image/icone.png" width="45px"></label>
+<header>
+    <!-- MENU DESKTOP -->
+    <nav class="desktop">
+        <ul class="ul-desktop">
+            <div id="menu-mobile">
+            <a href="index.html" class="a-desktop"><li class="li-desktop">Inicio</li></a>
+            <a href="cad_user.html" class="a-desktop"><li class="li-desktop">Cadastro Cliente</li></a>
+            <a href="busca_user.html" class="a-desktop"><li class="li-desktop">Buscar Cliente</li></a>
+            <a href="nova_os.html" class="a-desktop"><li class="li-desktop">Nova OS</li></a>
+            <a href="busca_os.html" class="a-desktop"><li class="li-desktop">Buscar OS</li></a>
+            <a href="contato.html" class="a-desktop"><li class="li-desktop">Contato</li></a>
+            </div>
+        </ul>
+    </nav>
+    <!-- FIM MENU DESKTOP -->
+</header>
+
+
+
+<!-- CORPO DO SITE -->
+<div class="mt-5 col-md-8 col-12 mx-auto border py-4 bg-light font-arial">
+    <h2 class="py-2 mx-auto bg-light text-center">Buscar Cliente</h2>
+
+    <!--ALERTA DE NÃO ENCONTRADO-->
+    <div id="nao_encontrada" class="alert alert-warning text-center" style="display:none;">
+        <h5>Cliente Não Encontrado</h5>
+    </div>
+    <!--ALERTA DE ALTERAÇÃO-->
+    <div id="alterado" class="alert alert-success text-center" style="display:none;">
+        <h5>Registro alterado com Sucesso</h5>
+    </div>
+    <!--ALERTA DE ERRO NA REQUISIÇÃO-->
+    <div id="erro" class="alert alert-danger text-center" style="display:none;">
+        <h5>ERRO COM SERVIDOR</h5>
+        <p>Se persisitir contate um técnico</p>
+    </div>
+
+
+    <div class="form-row">
+        <div class="form-group col-6">
+            <input type="text" id="id" hidden>
+            <label for="nome">Nome Completo</label>
+            <input class="form-control" type="text" id="nome" placeholder="Nome Completo para a Busca" >
+        </div>
+        <div class="form-group col-6">
+            <label for="cpf">CPF</label>
+            <input class="form-control" type="text" id="cpf" placeholder="CPF do Cliente" >
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-6">
+            <label for="telefone">Telefone</label>
+            <input class="form-control" type="text" id="telefone" disabled>
+        </div>
+        <div class="form-group col-6">
+            <label for="celular">Celular</label>
+            <input class="form-control" type="text" id="celular" disabled>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-8">
+            <label for="rua">Rua</label>
+            <input class="form-control" type="text" id="rua" disabled>
+        </div>
+        <div class="form-group col-4">
+            <label for="bairro">Bairro</label>
+            <input class="form-control" type="text" id="bairro" disabled>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-6">
+            <label for="cidade">Cidade</label>
+            <input type="text" id="cidade" class="form-control" disabled>
+        </div>
+
+        <div class="form-group col-2">
+            <label for="estado">Estado</label>
+            <select class="custom-select" id="estado" disabled>
+                <option value="SP">SP</option>
+
+            </select>
+        </div>
+
+        <div class="form-group col-4">
+            <label for="cep">CEP</label>
+            <input type="text" id="cep" class="form-control" disabled>
+        </div>
+    </div>
+
+    <div class="text-center my-3">
+        <input type="submit" class="btn btn-lg btn-primary" name="buscar" value="Buscar">
+        <input type="submit" class="btn btn-lg btn-warning" name="alterar" value="Alterar" style="display:none;">
+        <input type="submit" class="btn btn-lg btn-danger" name="voltar" value="Voltar" style="display:none;">
+
+    </div>
+</div>
+
+
+    <!--LISTAR ORDEM DE SERVIÇO-->
+    <div class='list-group col-md-8 mx-auto  col-12 font-arial text-center pr-0'>
+
+    </div>
+<!--FIM DO CORPO DA APLICAÇÃO-->
+
+<!--Rodapé Aplicação -->
+<footer class="footer-bg">
+    <h6 class="footer-font">© 2019 Copyright: Tiago Roberto Diana</h6>
+</footer>
+</main>
+</body>
+</html>

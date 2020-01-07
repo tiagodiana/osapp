@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="author" content="Tiago R. Diana">
+    <meta name="description" content="Ordem de Serviço">
+    <meta name="copyright" content="© 2019 Tiago Roberto Diana" />
+
+    <title>Ordem de Serviço</title>
+    <link rel="shortcut icon" href="image/logo-icone.png">
+
+    <link rel="stylesheet" type="text/css" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/menu.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/main.css">
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/menu.js"></script>
+   <!-- CODELAB: Add link rel manifest -->
+   <link rel="manifest" href="manifest.json">
+   <!-- CODELAB: Add meta theme-color -->
+   <meta name="theme-color" content="#222222" />
+   <script src="app.js"></script>
+    <script>
+        $(document).ready(function(){
+
+            //Botão BUSCAR ============================================================================
+            $('button[name=buscar]').click(function () {
+                var id_os = $('#num_os').val()
+                $.ajax({
+                    url:"http://localhost/osapp/server/webservice.php",
+                    method:"post",
+                    data:{
+                        'tipo':'buscar_os',
+                        'id_os':id_os
+                    },
+                    success:function (retorno) {
+                        var dados = JSON.parse(retorno)
+                        if(dados != null){
+                            liberaCampos()
+                            $('#num_os').val(dados.id_os)
+                            $('#cliente').val(dados.nome)
+                            $('#tipo').val(dados.tipo)
+                            $('#marca').val(dados.marca)
+                            $('#modelo').val(dados.modelo)
+                            $('#num_serie').val(dados.num_serie)
+                            $('#defeito').val(dados.defeito)
+                            $('#solucao').val(dados.solucao)
+                            $('#valor').val(dados.valor)
+                            $('#data_entrada').val(`Entrada:  ${dados.data_entrada}`)
+                            $('#data_saida').val(`Saida:  ${dados.data_saida}`)
+                            mostarEdicao()
+                            statusOS(dados.status)
+
+                        }
+                        else{
+                            $('#nao_encontrada').slideDown()
+                            setTimeout(function(){
+                                $('#nao_encontrada').slideUp()
+                            },2000)
+                        }
+                    },
+                    timeout:3000,
+                    error:function () {
+                        $('#erro').slideDown()
+                        setTimeout(function(){
+                            $('#erro').slideUp()
+                        },2500)
+                    }
+                })
+
+            })
+
+            //BOTÃO FINALIZAR ============================================================================
+            $('button[name=finalizar]').click(function(){
+                var id_os = $('#num_os').val()
+                var nome = $('#cliente').val()
+                $.ajax({
+                    url:"http://localhost/osapp/server/webservice.php",
+                    method:"post",
+                    data:{
+                        'tipo':'finalizar_os',
+                        'id_os':id_os,
+                        'nome': nome
+                    },
+                    success:function(retorno){
+                        var dados = JSON.parse(retorno)
+                        if(dados.ok > 0){
+                            liberaCampos()
+                            $('#finalizado').slideDown()
+                            setTimeout(function(){
+                                $('body').html(dados.imprimir)
+                            },3000)
+
+                        }
+                        else{
+                            $('#erro').slideDown()
+                            setTimeout(function(){
+                                $('#erro').slideUp()
+                            },2000)
+                        }
+                    },
+                    timeout:3000,
+                    error:function(){
+                        $('#erro').slideDown()
+                        setTimeout(function(){
+                            $('#erro').slideUp()
+                        },2000)
+                    }
+                })
+            })
+
+            //BOTÃO ALTERAR =====================================================================================
+            $('button[name=alterar]').click(function(){
+                var id_os = $('#num_os').val()
+                var nome = $('#cliente').val()
+                var tipo = $('#tipo').val()
+                var marca = $('#marca').val()
+                var modelo = $('#modelo').val()
+                var num_serie = $('#num_serie').val()
+                var defeito = $('#defeito').val()
+                var solucao = $('#solucao').val()
+                var valor = $('#valor').val()
+                $.ajax({
+                    url:"http://localhost/osapp/server/webservice.php",
+                    method:"post",
+                    data:{
+                        "tipo":"alterar_os",
+                        "id_os": id_os,
+                        "nome" : nome,
+                        "hardware":tipo,
+                        "marca":marca,
+                        "modelo":modelo,
+                        "num_serie":num_serie,
+                        "defeito":defeito,
+                        "solucao":solucao,
+                        "valor":valor
+                    },
+                    success:function(retorno){
+                        $('#alterado').slideDown()
+                        setTimeout(function(){
+                        $('#alterado').slideUp()
+                        },2500)
+                    },
+                    timeout:3000,
+                    error:function(){
+                        $('#erro').slideDown()
+                        setTimeout(function(){
+                        $('#erro').slideUp()
+                        },2500)
+                    }
+                })
+            })
+
+            //BOTÃO DELETAR ====================================================================================
+            $('button[name=deletar]').click(function(){
+                var id_os = $('#num_os').val()
+                $.post("http://localhost/osapp/server/webservice.php", {'tipo':'deletar_os','id_os':id_os})
+                .done(function(retorno){
+                    if(retorno > 0){
+                        liberaCampos()
+                        $('#deletado').slideDown()
+                        setTimeout(function(){
+                            $('#deletado').slideUp()
+                        },2000)
+                        mostraBusca()
+                    }
+                    else{
+                        $('#erro').slideDown()
+                    setTimeout(function(){
+                        $('#erro').slideUp()
+                    },2500)    
+                    }
+                })
+                .fail(function(){
+                    $('#erro').slideDown()
+                    setTimeout(function(){
+                        $('#erro').slideUp()
+                    },2500)
+                })
+            })
+
+        //BOTÃO VOLTAR =============================================================================
+            $('button[name=voltar]').click(function(){
+                liberaCampos()
+                mostraBusca()
+            })
+
+        })
+        //LIMPA TODOS OS CAMPOS =====================================================================
+        function liberaCampos(){
+            $('#num_os').val("")
+            $('#cliente').val("")
+            $('#tipo').prop('disabled', !$('#tipo').prop('disabled')).val("")
+            $('#marca').prop('disabled', !$('#marca').prop('disabled')).val("")
+            $('#modelo').prop('disabled', !$('#modelo').prop('disabled')).val("")
+            $('#num_serie').prop('disabled', !$('#num_serie').prop('disabled')).val("")
+            $('#defeito').prop('disabled', !$('#defeito').prop('disabled')).val("")
+            $('#solucao').prop('disabled', !$('#solucao').prop('disabled')).val("")
+            $('#valor').prop('disabled', !$('#valor').prop('disabled')).val("")
+            $('#data_entrada').val("")
+            $('#data_saida').val("")
+            $('#status').html("")
+        }
+        //MOSTRA BOTÃO DE BUSCA=======================================================================
+        function mostraBusca(){
+            $('#num_os').prop('disabled', !$('#num_os').prop('disabled'))
+            $('#cliente').val("")
+            $('button[name=finalizar]').hide('slow')
+            $('button[name=alterar]').hide('slow')
+            $('button[name=deletar]').hide('slow')
+            $('button[name=voltar]').hide('slow')
+            $('button[name=buscar]').show('slow')
+        }
+        //MOSTRA BOTÃO DE EDIÇÃO ======================================================================
+        function mostarEdicao(){
+            $('#num_os').prop('disabled', !$('#num_os').prop('disabled'))
+            $('button[name=buscar]').hide('slow')
+            $('button[name=finalizar]').show('slow')
+            $('button[name=alterar]').show('slow')
+            $('button[name=deletar]').show('slow')
+            $('button[name=voltar]').show('slow')
+        }
+
+        //MOSTRAR STATUS
+        function statusOS(status) {
+            if(status == 1){
+                $('button[name=finalizar]').hide('slow')
+                $('button[name=alterar]').hide('slow')
+                $('#status').append("<h2 class='text-success'>Finalizada</h2>")
+            }
+            else{
+                $('#status').append("<h2 class='text-danger'>Aberta</h2>")
+            }
+        }
+    </script>
+
+</head>
+<body>
+<main>
+    <!-- MENU MOBILE -->
+    <input type="checkbox" id="checkmenu">
+    <label for="checkmenu" id="icone-mobile"><img src="image/icone.png" width="45px"></label>
+    <header>
+        <!-- MENU DESKTOP -->
+        <nav class="desktop">
+            <ul class="ul-desktop">
+                <div id="menu-mobile">
+                    <a href="index.html" class="a-desktop"><li class="li-desktop">Inicio</li></a>
+                    <a href="cad_user.html" class="a-desktop"><li class="li-desktop">Cadastro Cliente</li></a>
+                    <a href="busca_user.html" class="a-desktop"><li class="li-desktop">Buscar Cliente</li></a>
+                    <a href="nova_os.html" class="a-desktop"><li class="li-desktop">Nova OS</li></a>
+                    <a href="busca_os.html" class="a-desktop"><li class="li-desktop">Buscar OS</li></a>
+                    <a href="contato.html" class="a-desktop"><li class="li-desktop">Contato</li></a>
+                </div>
+            </ul>
+        </nav>
+        <!-- FIM MENU DESKTOP -->
+    </header>
+
+
+
+    <!-- CORPO DO SITE -->
+    <div  class="border mx-auto col-md-8 col-12 bg-light font-arial my-4">
+        <h2 class="pt-5 pb-3 mx-auto bg-light text-center mb-4">Buscar Ordem de Serviço</h2>
+
+
+
+
+        <div class="form-group">
+            <label for="num_os">Nº Ordem de Serviço</label>
+            <input type="text"  id="num_os" class="form-control col-5">
+        </div>
+        <div class="form-group">
+            <label for="cliente">Cliente</label>
+            <input type="text"  id="cliente" class="form-control" disabled>
+        </div>
+
+
+        <div class="form-row ">
+            <div class="form-group col-md-3 col-3">
+                <label for="tipo">Tipo</label>
+                <input type="text" id="tipo" class="form-control" disabled>
+            </div>
+
+            <div class="form-group col-md-3 col-3">
+                <label for="marca">Marca</label>
+                <input type="text" name="marca" id="marca" class="form-control" disabled>
+            </div>
+
+            <div class="form-group col-md-3 col-3">
+                <label for="modelo">Modelo</label>
+                <input type="text" id="modelo" class="form-control" disabled>
+            </div>
+
+            <div class="form-group col-md-3 col-3">
+                <label for="num_serie">N° Serie</label>
+                <input type="text" id="num_serie" class="form-control" disabled>
+            </div>
+
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-6">
+                <label for="defeito">Defeito</label>
+                <textarea id="defeito" class="form-control" rows="4"  disabled></textarea>
+            </div>
+            <div class="form-group col-6">
+                <label for="solucao">Solução</label>
+                <textarea id="solucao" class="form-control" rows="4"  disabled></textarea>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <h2 class="col-6 text-center pt-2">Valor</h2>
+            <input type="text"  id="valor" disabled style="border:none;background: none;">
+        </div>
+
+        <div class="form-row ">
+            <div class="form-group col-6">
+                <input type="text" id="data_entrada" class="form-control data" readonly style="background:none;border: none;">
+            </div>
+            <div class="form-group col-6">
+                <input type="text" id="data_saida" class="form-control data" readonly style="background:none;border: none;">
+            </div>
+        </div>
+        <div id="status" class="text-center">
+            
+        </div>
+
+
+        <!-- ALERTS ===============================================================================-->
+        <!--ALERTA DE NÃO ENCONTRADA-->
+        <div id="nao_encontrada" class="alert alert-warning text-center" style="display:none;">
+            <h5>Ordem de Serviço Não Encontrada</h5>
+        </div>
+        <!--ALERTA FINALIZADO COM SUCESSO-->
+        <div id="finalizado" class="alert alert-success text-center" style="display:none;">
+            <h5>Ordem de Serviço Finalizada com sucesso</h5>
+            <p>Preparando Impressão</p>
+        </div>
+        <!--ALERTA ALTERADO COM SUCESSO-->
+        <div id="alterado" class="alert alert-success text-center" style="display:none;">
+            <h5>Ordem de Serviço Alterada com sucesso</h5>
+        </div>
+        <!--ALERTA DELETADO COM SUCESSO-->
+        <div id="deletado" class="alert alert-danger text-center" style="display:none;">
+            <h5>Ordem de Serviço Deletado com Sucesso</h5>
+        </div>
+
+        <!--ALERTA DE ERRO DE REQUISIÇÃO-->
+        <div id="erro" class="alert alert-danger text-center" style="display:none;">
+            <h5>ERRO com Servidor</h5>
+            <p>Se persistir contate um técnico</p>
+        </div>
+        <!-- FIM ALERTS =========================================================================-->
+
+        <div class="text-center my-4">
+            <button class="btn btn-lg btn-primary text-center" name="buscar">Buscar</button>
+            <button class="btn btn-lg btn-success text-center" name="finalizar" style="display: none;">Finalizar</button>
+            <button class="btn btn-lg btn-warning text-center" name="alterar" style="display: none;">Alterar</button>
+            <button class="btn btn-lg btn-danger text-center" name="deletar" style="display: none;">Deletar</button>
+            <button class="btn btn-lg btn-secondary text-center" name="voltar" style="display: none;">Voltar</button>
+        </div>
+    </div>
+
+
+
+
+    <!--Rodapé Aplicação -->
+    <footer class="footer-bg">
+        <h6 class="footer-font">© 2019 Copyright: Tiago Roberto Diana</h6>
+    </footer>
+</main>
+</body>
+</html>

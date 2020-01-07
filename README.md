@@ -1,2 +1,2 @@
-# OS App
-Sistema de Ordem de Serviço em PWA
+# App Ordem de Serviço
+Sistema Para Gerar Ordem de Serviço

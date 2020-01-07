@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="author" content="Tiago R. Diana">
+    <meta name="description" content="Ordem de Serviço">
+    <meta name="copyright" content="© 2019 Tiago Roberto Diana" />
+
+    <title>Ordem de Serviço</title>
+    <link rel="shortcut icon" href="image/logo-icone.png">
+
+    <link rel="stylesheet" type="text/css" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/menu.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/main.css">
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/menu.js"></script>
+    <!-- CODELAB: Add link rel manifest -->
+    <link rel="manifest" href="manifest.json">
+    <!-- CODELAB: Add meta theme-color -->
+    <meta name="theme-color" content="#222222" />
+    <script src="app.js"></script>
+
+    <script>
+        now = new Date()
+        var nome, tipo, marca, modelo, num_serie, defeito, solucao, valor
+        $(document).ready(function(){
+
+            //BOTAO CRIAR OS
+            $('button[name=criar]').click(function () {
+                nome = $('#cliente').val()
+                tipo = $('#tipo').val()
+                marca = $('#marca').val()
+                modelo = $('#modelo').val()
+                num_serie = $('#num_serie').val()
+                defeito = $('#defeito').val()
+                solucao = $('#solucao').val()
+                valor = $('#valor').val()
+                $('#nome_cliente_salvar').val(nome)
+                $('#tipo_salvar').val(tipo)
+                $('#marca_salvar').val(marca)
+                $('#modelo_salvar').val(modelo)
+                $('#num_serie_salvar').val(num_serie)
+                $('#defeito_salvar').val(defeito)
+                $('#solucao_salvar').val(solucao)
+                $('#valor_salvar').val(valor)
+                $('#data').val(`Entrada: ${now.toLocaleString()}`)
+                $('#criar_os').hide('slow')
+                $('#salva_os').slideDown('slow')
+            })
+
+
+            //BOTAO CONCLUIR ONDE SERA SALVO A OS
+            $('input[name=concluir]').click(function () {
+                $.ajax({
+                    url:'http://localhost/osapp/server/webservice.php',
+                    method: 'post',
+                    data:{
+                        'tipo': 'nova_os',
+                        'nome':nome,
+                        'hardware':tipo,
+                        'marca':marca,
+                        'modelo':modelo,
+                        'num_serie':num_serie,
+                        'defeito':defeito,
+                        'solucao':solucao,
+                        'valor':valor
+                    },
+                    success:function (retorno) {
+                        var json = JSON.parse(retorno)
+                        $('#sucesso').show('slow')
+                        setTimeout(function () {
+                            $('body').html(json.imprimir)
+                        }, 3000)
+                    },
+                    timeout:3000,
+                    error: function(){
+                        $('#erro').slideDown()
+                        setTimeout(function(){
+                            $('#erro').slideUp()
+                        },1500)
+                    }
+                })
+            })
+
+            $('input[name=voltar]').click(function(){
+                $('#salva_os').hide('slow')
+                $('#criar_os').slideDown('slow')
+            })
+
+        })
+    </script>
+
+</head>
+<body>
+<main>
+    <!-- MENU MOBILE -->
+    <input type="checkbox" id="checkmenu">
+    <label for="checkmenu" id="icone-mobile"><img src="image/icone.png" width="45px"></label>
+    <header>
+        <!-- MENU DESKTOP -->
+        <nav class="desktop">
+            <ul class="ul-desktop">
+                <div id="menu-mobile">
+                    <a href="index.html" class="a-desktop"><li class="li-desktop">Inicio</li></a>
+                    <a href="cad_user.html" class="a-desktop"><li class="li-desktop">Cadastro Cliente</li></a>
+                    <a href="busca_user.html" class="a-desktop"><li class="li-desktop">Buscar Cliente</li></a>
+                    <a href="nova_os.html" class="a-desktop"><li class="li-desktop">Nova OS</li></a>
+                    <a href="busca_os.html" class="a-desktop"><li class="li-desktop">Buscar OS</li></a>
+                    <a href="contato.html" class="a-desktop"><li class="li-desktop">Contato</li></a>
+                </div>
+            </ul>
+        </nav>
+        <!-- FIM MENU DESKTOP -->
+    </header>
+
+
+
+
+
+    <!--GERANDO ORDEM DE SERVIÇO -->
+    <div id="criar_os" class="border mx-auto col-md-8 col-12 bg-light font-arial my-4">
+        <h2 class="pt-5 pb-3 mx-auto bg-light text-center mb-4">Nova Ordem de Serviço</h2>
+        <!--ALERTA DE ERRO DE REQUISIÇÃO-->
+        <div id="erro" class="alert alert-danger text-center" style="display:none;">
+            <h5>ERRO com Servidor</h5>
+            <p>Se persistir contate um técnico</p>
+        </div>
+        <div class="form-group">
+            <label for="cliente">Cliente</label>
+            <select class="custom-select form-control" name="cliente" id="cliente">
+                <script>
+                    $(document).ready(function () {
+                        $.ajax({
+                            url: "http://localhost/osapp/server/webservice.php",
+                            method: "post",
+                            data: {
+                                tipo:"all_user"
+                            },
+                            success: function(retorno){
+                                var dados = JSON.parse(retorno)
+                                if(dados.length == 0){
+                                    $('#cliente').append("<option value='nao'>Não existe Clientes Cadastrados</option>")
+                                }
+                                else{
+                                    for (var c = 0 ; c < dados.length ; c++){
+                                        $('#cliente').append("<option value='"+dados[c].nome+"'>"+dados[c].nome+"</option>")
+                                    }
+                                }
+                            },
+                            timeout:3000,
+                            error: function() {
+                                alert("ERRO")
+                            }
+                        })
+                    })
+                </script>
+            </select>
+        </div>
+
+
+        <div class="form-row ">
+            <div class="form-group col-md-3 col-3">
+                <label for="tipo">Tipo</label>
+                <select name="tipo" class="custom-select form-control" id="tipo" >
+                    <option value="Computador">Computador</option>
+                    <option value="Notebook">Notebook</option>
+                    <option value="Celular">Celular</option>
+                    <option value="Tablet">Tablet</option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-3 col-3">
+                <label for="marca">Marca</label>
+                <input type="text" name="marca" id="marca" class="form-control">
+            </div>
+
+            <div class="form-group col-md-3 col-3">
+                <label for="modelo">Modelo</label>
+                <input type="text" name="modelo" id="modelo" class="form-control">
+            </div>
+
+            <div class="form-group col-md-3 col-3">
+                <label for="num_serie">N°Serie</label>
+                <input type="text" name="num_serie" id="num_serie" class="form-control">
+            </div>
+
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-6">
+                <label for="defeito">Defeito</label>
+                <textarea id="defeito" class="form-control" rows="4" name="defeito"></textarea>
+            </div>
+            <div class="form-group col-6">
+                <label for="solucao">Solução</label>
+                <textarea id="solucao" class="form-control" rows="4" name="solucao"></textarea>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <h2 class="col-6 text-center pt-2">Valor</h2>
+            <input type="text" name="valor" id="valor" class="col-3 form-control mt-2">
+        </div>
+        <div class="text-center my-4">
+            <button name="criar" class="btn btn-lg btn-primary text-center">Criar</button>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <!--SALVAR ORDEM DE SERVIÇO-->
+    <div id="salva_os" class="col-12 col-md-10 mx-auto my-5" style="display:none; ">
+        <h2 class="py-4 mx-auto bg-light text-center mb-4">Ordem de Serviço</h2>
+        <div class="form-group">
+            <label for='cliente'>Cliente</label>
+            <input type="text"  id="nome_cliente_salvar" class="form-control" readonly style="background:none;">
+        </div>
+
+        <div class="form-row ">
+            <div class="form-group col-md-3 col-3">
+                <label for="tipo">Tipo</label>
+                <input type="text" name="tipo" id="tipo_salvar" class="form-control" readonly style="background:none;">
+            </div>
+
+            <div class="form-group col-md-3 col-3">
+                <label for="marca">Marca</label>
+                <input type="text" name="marca" id="marca_salvar" class="form-control" readonly style="background:none;">
+            </div>
+
+            <div class="form-group col-md-3 col-3">
+                <label for="modelo">Modelo</label>
+                <input type="text" name="modelo" id="modelo_salvar" class="form-control" readonly style="background:none;">
+            </div>
+
+            <div class="form-group col-md-3 col-3">
+                <label for="num_serie">N° Serie</label>
+                <input type="text" name="num_serie" id="num_serie_salvar" class="form-control" readonly style="background:none;">
+            </div>
+
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-6">
+                <label for="defeito">Defeito</label>
+                <textarea id="defeito_salvar" name="defeito" class="form-control" rows="4" readonly style="background:none;"></textarea>
+            </div>
+            <div class="form-group col-6">
+                <label for="solucao">Solução</label>
+                <textarea id="solucao_salvar" name="solucao" class="form-control" rows="4" readonly style="background:none;"></textarea>
+            </div>
+        </div>
+
+        <div class="form-row ">
+            <h2 class="col-5 offset-1 text-center pt-2">Valor</h2>
+            <h2 class="col-1 text-right pt-2 mr-2">R$</h2>
+            <input class="col-3" type="text" name="valor" id="valor_salvar" value="" readonly style="background: none; border: none; font-size: 24pt;">
+        </div>
+        <div class="form-group">
+            <input type="text" name="data" id="data" class="form-control " value="Data de Entrada" readonly style="background:none;border: none; font-size: 14pt;">
+        </div>
+        <div class="alert alert-success text-center" style="display: none;" id="sucesso">
+            <h3>Ordem de Serviço Cadastrada com Sucesso</h3>
+            <h4>Preparando Impressão</h4>
+        </div>
+
+        <div class="text-center my-4">
+            <input type="submit" name="concluir" class="btn btn-lg btn-primary" value="Concluir">
+            <input type="submit" name="voltar" class="btn btn-lg btn-danger" value="Voltar">
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    
+
+
+    <!--Rodapé Aplicação -->
+    <footer class="footer-bg ">
+        <h6 class="footer-font">© 2019 Copyright: Tiago Roberto Diana</h6>
+    </footer>
+</main>
+</body>
+</html>

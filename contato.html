@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="author" content="Tiago R. Diana">
+    <meta name="description" content="Ordem de Serviço">
+    <meta name="copyright" content="© 2019 Tiago Roberto Diana" />
+
+
+    <title>Ordem de Serviço</title>
+    <link rel="shortcut icon" href="image/logo-icone.png">
+
+    <link rel="stylesheet" type="text/css" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/contato.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/menu.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/main.css">
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/menu.js"></script>
+    <!-- CODELAB: Add link rel manifest -->
+    <link rel="manifest" href="manifest.json">
+    <!-- CODELAB: Add meta theme-color -->
+    <meta name="theme-color" content="#222222" />
+    <script src="app.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('input[name=enviar_contato]').click(function () {
+                var nome = $('#nome_contato').val()
+                var email = $('#email_contato').val()
+                var msg = $('#msg_contato').val()
+
+                $.ajax({
+                    url:"http://localhost/osapp/server/webservice.php",
+                    method:"post",
+                    data:{
+                        "tipo":"msg_contato",
+                        "nome_contato":nome,
+                        "email_contato":email,
+                        "msg_contato":msg
+                    },
+                    success:function (retorno) {
+                        $('#sucesso').slideDown()
+                        setTimeout(function(){
+                            $('#sucesso').slideUp()
+                        },2000)
+                    },
+                    timeout:3000,
+                    error:function () {
+                        $('#erro').slideDown()
+                        setTimeout(function(){
+                            $('#erro').slideUp()
+                        },3000)
+                    }
+                })
+
+
+            })
+        })
+    </script>
+</head>
+<body>
+<main>
+    <!-- MENU MOBILE -->
+    <input type="checkbox" id="checkmenu">
+    <label for="checkmenu" id="icone-mobile"><img src="image/icone.png" width="45px" alt="Logo Inicio"></label>
+    <header>
+        <!-- MENU DESKTOP -->
+        <nav class="desktop">
+            <ul class="ul-desktop">
+                <div id="menu-mobile">
+                    <a href="index.html" class="a-desktop"><li class="li-desktop">Inicio</li></a>
+                    <a href="cad_user.html" class="a-desktop"><li class="li-desktop">Cadastro Cliente</li></a>
+                    <a href="busca_user.html" class="a-desktop"><li class="li-desktop">Buscar Cliente</li></a>
+                    <a href="nova_os.html" class="a-desktop"><li class="li-desktop">Nova OS</li></a>
+                    <a href="busca_os.html" class="a-desktop"><li class="li-desktop">Buscar OS</li></a>
+                    <a href="contato.html" class="a-desktop"><li class="li-desktop">Contato</li></a>
+                </div>
+            </ul>
+        </nav>
+        <!-- FIM MENU DESKTOP -->
+    </header>
+
+
+
+    <!-- CORPO DO SITE -->
+    <div class="container contact-form border border-light bg-light">
+        <div class="contact-image">
+            <img src="image/logo-icone.png" alt="OS_APP" class="img-fluid"/>
+        </div>
+        <!--ALERTA DE E-MAIL ENVIADO COM SUCESSO-->
+        <div id="sucesso" class="alert alert-success text-center" style="display:none;">
+            <h5>E-mail Enviado com sucesso</h5>
+        </div>
+        <!--ALERTA ERRO AO ENVIAR E-MAIL-->
+        <div id="erro_email" class="alert alert-danger text-center" style="display:none;">
+            <h5>Erro ao enviar o E-mail</h5>
+        </div>
+        <!--ALERTA DE ERRO NA REQUISIÇÃO-->
+        <div id="erro" class="alert alert-danger text-center" style="display:none;">
+            <h5>ERRO COM SERVIDOR</h5>
+            <p>Se persisitir contate um técnico</p>
+        </div>
+        <div class="form">
+            <h3><strong>Envie Sua Menssagem</strong></h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input type="text" id="nome_contato" class="form-control" placeholder="Nome Completo *" required/>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="email_contato" class="form-control" placeholder="E-mail *" required/>
+                    </div>
+
+
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <textarea id="msg_contato" class="form-control" placeholder="Mensagem *" style="width: 100%; height: 150px;" required></textarea>
+                    </div>
+                </div>
+                <div class="form-group text-center col-12">
+                    <input type="submit" name="enviar_contato" class="btn btn-dark" value="Enviar Mensagem" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!--Rodapé Aplicação -->
+    <footer class="footer-bg ">
+        <h6 class="footer-font">© 2019 Copyright: Tiago Roberto Diana</h6>
+    </footer>
+</main>
+</body>
+</html>
