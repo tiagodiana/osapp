@@ -1,7 +1,7 @@
 <?php
 header("Access-Control-Allow-Origin: * ");
 
-$conn = mysqli_connect('localhost', 'root', '1872', 'os');
+$conn = mysqli_connect('localhost', 'root', '', 'os');
 mysqli_set_charset($conn, "utf8");
 
 global $nome,$cpf,$telefone,$celular,$rua,$bairro,$cidade,$estado,$cep;
