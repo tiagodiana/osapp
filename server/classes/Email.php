@@ -12,9 +12,9 @@ class Email
 
     public function __construct($conteudo)
     {
-        $this->emailorigem = "cell.infotec@gmail.com";
-        $this->senhaorigem = "187239415263";
-        $this->emaildestino = "tiagofloyd777@gmail.com";
+        $this->emailorigem = "";
+        $this->senhaorigem = "";
+        $this->emaildestino = "";
         $this->assunto = "Suporte OS APP(PWA)";
         $this->conteudo = $conteudo;
     }

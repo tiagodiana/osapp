@@ -18,6 +18,8 @@ function removervalidacao()
 {
     $('input').removeClass('is-valid')
     $('input').removeClass('is-invalid')
+    $('select').removeClass('is-valid')
+    $('select').removeClass('is-invalid')
 }
 
 
@@ -41,8 +43,8 @@ $(document).ready(function()
         celular = $('#celular').val()
         rua = $('#rua').val()
         bairro = $('#bairro').val()
-        cidade = $('#cidade').val()
-        estado = $('#estado').val()
+        cidade = $('#cidades').val()
+        estado = $('#estados').val()
         cep = $('#cep').val()
         ok = true
 
@@ -64,15 +66,19 @@ $(document).ready(function()
         if(bairro) {$('#bairro').addClass('is-valid'); ok=true }
         else {$('#bairro').addClass('is-invalid'); ok=false }
 
-        if(cidade) {$('#cidade').addClass('is-valid'); ok=true }
-        else {$('#cidade').addClass('is-invalid'); ok=false }
+        if(estado) {$('#estados').addClass('is-valid'); ok= true }
+        else {$('#estados').addClass('is-invalid'); ok= false }
+
+        if(cidade) {$('#cidades').addClass('is-valid'); ok=true }
+        else {$('#cidades').addClass('is-invalid'); ok=false }
 
         if(verificartxt(cep, 8)) {$('#cep').addClass('is-valid'); ok=true }
-        else {$('#cep').addClass('is-invalid'); ok=false}
+        else {$('#cep').addClass('is-invalid'); ok=false }
 
 
         if(ok)
         {
+            estado = estado.split(' ')[1]
             $.ajax({
                 url:"http://localhost/osapp/server/webservice.php",
                 method:"post",
