@@ -1,7 +1,11 @@
 <?php
-header("Access-Control-Allow-Origin: * ");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type");
 
-$conn = mysqli_connect('localhost', 'root', '', 'os');
+require_once "classes/Email.php";
+
+
+$conn = mysqli_connect('localhost', 'root', '1872', 'os');
 mysqli_set_charset($conn, "utf8");
 
 global $nome,$cpf,$telefone,$celular,$rua,$bairro,$cidade,$estado,$cep;
@@ -16,12 +20,13 @@ $data = date('o-m-d G:i:s');
 //CADASTRANDO CLIENTE
 if($tipo == "inserir"){
     $dados = receberDados($_POST);
-	$sql = "INSERT INTO clientes VALUES(0, '".$dados['nome']."', '".$dados['cpf']."', '".$dados['telefone']."', '".$dados['celular']."', '".$dados['rua']."', '".$dados['bairro']."', '".$dados['cidade']."', '".$dados['estado']."', '".$dados['cep']."')";
+	$sql = "INSERT INTO clientes VALUES(null, '".$dados['nome']."', '".$dados['cpf']."', '".$dados['telefone']."', '".$dados['celular']."', '".$dados['rua']."', '".$dados['bairro']."', '".$dados['cidade']."', '".$dados['estado']."', '".$dados['cep']."')";
 	if(mysqli_query($conn, $sql)){
-	    echo "Cadastrado Com Sucesso";
+	    echo 1;
     }
     else{
-	    echo "ERRO AO CADASTRAR";
+        echo $sql;
+	    echo 0;
     }
 }
 
@@ -48,6 +53,8 @@ else if($tipo == "buscar_user"){
         $json = json_encode($data, JSON_UNESCAPED_UNICODE);
         echo $json;
     }
+    else
+    	echo 0;
 }
 
 else if($tipo == "alterar_user"){
@@ -177,9 +184,14 @@ else if($tipo == "deletar_os"){
 }
 
 //ENVIANDO E-MAIL DE CONTATO
-else if($tipo == "msg_contato"){
+else if($tipo == "enviarEmail"){
+    $dados = receberDados($_POST);
+    $conteudo = "<h3>{$dados['nome_contato']} </h3>";
+    $conteudo .= "<h4>{$dados['email_contato']} </h4>";
+    $conteudo .= "<p>{$dados['msg_contato']} </p>";
 
-
+    $mail = new Email($conteudo);
+    echo $mail->enviar();
 }
 
 

@@ -14,72 +14,21 @@
     <link rel="stylesheet" type="text/css" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/menu.css">
     <link rel="stylesheet" type="text/css" href="assets/css/main.css">
-    <script src="assets/js/jquery.js"></script>
+	<script src="assets/js/jquery.js"></script>
+	<script src='assets/js/jquery-mask.js'></script>
 	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="assets/js/menu.js"></script>
+
+
+	<script src='assets/js/verificadores.js'></script>
+	<script src='assets/js/caduser.js'></script>
+
+	
 	<!-- CODELAB: Add link rel manifest -->
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json"> 
     <!-- CODELAB: Add meta theme-color -->
     <meta name="theme-color" content="#222222" />
-    <script src="app.js"></script>
-    <script>
-
-		//Codigo AJAX para cadastro de usuario
-    	$(document).ready(function(){
-    		$('button[name=salvar]').click(function(){
-    			var nome = $('#nome').val()
-    			var cpf = $('#cpf').val()
-    			var telefone = $('#telefone').val()
-    			var celular = $('#celular').val()
-    			var rua = $('#rua').val()
-    			var bairro = $('#bairro').val()
-    			var cidade = $('#cidade').val()
-    			var estado = $('#estado').val()
-    			var cep = $('#cep').val()
-    			$.ajax({
-    				url:"http://localhost/osapp/server/webservice.php",
-    				method:"post",
-    				data:{
-    					'tipo':'inserir',
-    					'nome':nome,
-    					'cpf':cpf,
-    					'telefone':telefone,
-    					'celular':celular,
-    					'rua':rua,
-    					'bairro':bairro,
-    					'cidade':cidade,
-    					'estado':estado,
-    					'cep':cep
-    				},
-    				success: function(retorno){
-                        limparCampos()
-    					$('#sucesso').slideDown()
-                            setTimeout(function(){
-                                $('#sucesso').slideUp()
-                            },1500)
-    				},
-    				timeout:3000,
-    				error: function(){
-    					$('#erro').slideDown()
-                            setTimeout(function(){
-                                $('#erro').slideUp()
-                            },1500)
-    				}
-    			})
-    		})
-
-    	})
-        function limparCampos(){
-            $('#nome').val("")
-            $('#cpf').val("")
-            $('#telefone').val("")
-            $('#celular').val("")
-            $('#rua').val("")
-            $('#bairro').val("")
-            $('#cidade').val("")
-            $('#cep').val("")
-        }
-    </script>
+    <script src="app.js"></script> 
 </head>
 <body>
 <main>
@@ -104,23 +53,27 @@
 </header>
 
 
+  <!-- ALERT CLIENTE CADASTRADO -->
+<div class="alert alert-success text-center" id="sucesso" style="display: none;">
+	<h4>Cliente Cadastrado com Sucesso</h4>
+</div>
+<!-- ALERT ERRO NA REQUISIÇÃO -->
+<div class="alert alert-danger text-center" id="erro" style="display: none;">
+	<h4>ERRO - Não foi possivel conectar com o Servidor</h4>
+</div>
+ <!-- ALERT ERRO NO FORMULARIO -->
+ <div class="alert alert-danger text-center" id="erroForm" style="display: none;">
+	<h4>ERRO - Preencha corretamente os dados</h4>
+</div>
+
 
 <!-- CORPO DO SITE -->
 <div class="mt-5 col-md-8 col-12 mx-auto border py-4 bg-light font-arial logo">
 	<h2 class="py-2 mx-auto bg-light text-center">Cadastro de Cliente</h2>
-
-    <!-- ALERT CLIENTE CADASTRADO -->
-    <div class="alert alert-success text-center" id="sucesso" style="display: none;">
-        <h4>Cliente Cadastrado</h4>
-    </div>
-    <!-- ALERT ERRO NA REQUISIÇÃO -->
-    <div class="alert alert-danger text-center" id="erro" style="display: none;">
-        <h4>ERRO com o Servidor</h4>
-    </div>
 	<div class="form-row">
 		<div class="form-group col-6">
 			<label for="nome">Nome Completo</label>
-			<input class="form-control" type="text" id="nome" placeholder="Nome Completo" required>
+			<input class="form-control" type="text" id="nome" placeholder="Nome Completo" required= 'required'>
 		</div>
 		<div class="form-group col-6">
 			<label for="cpf">CPF</label>
@@ -151,12 +104,12 @@
 	</div>
 
 	<div class="form-row">
-		<div class="form-group col-6">
+		<div class="form-group col-5">
 			<label for="cidade">Cidade</label>
 			<input type="text"  id="cidade" class="form-control" required>
 		</div>
 		
-		<div class="form-group col-2">
+		<div class="form-group col-3">
 			<label for="estado">Estado</label>
 			<select class="custom-select" id="estado" required>
 				<option value="SP">SP</option>

@@ -19,46 +19,15 @@
     <script src="assets/js/jquery.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/menu.js"></script>
+    <script src="assets/js/verificadores.js"></script>
+    <script src="assets/js/contato.js"></script>
+
     <!-- CODELAB: Add link rel manifest -->
     <link rel="manifest" href="manifest.json">
     <!-- CODELAB: Add meta theme-color -->
     <meta name="theme-color" content="#222222" />
     <script src="app.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('input[name=enviar_contato]').click(function () {
-                var nome = $('#nome_contato').val()
-                var email = $('#email_contato').val()
-                var msg = $('#msg_contato').val()
-
-                $.ajax({
-                    url:"http://localhost/osapp/server/webservice.php",
-                    method:"post",
-                    data:{
-                        "tipo":"msg_contato",
-                        "nome_contato":nome,
-                        "email_contato":email,
-                        "msg_contato":msg
-                    },
-                    success:function (retorno) {
-                        $('#sucesso').slideDown()
-                        setTimeout(function(){
-                            $('#sucesso').slideUp()
-                        },2000)
-                    },
-                    timeout:3000,
-                    error:function () {
-                        $('#erro').slideDown()
-                        setTimeout(function(){
-                            $('#erro').slideUp()
-                        },3000)
-                    }
-                })
-
-
-            })
-        })
-    </script>
+    
 </head>
 <body>
 <main>
@@ -85,7 +54,7 @@
 
 
     <!-- CORPO DO SITE -->
-    <div class="container contact-form border border-light bg-light">
+    <div class="container contact-form border border-light bg-light ">
         <div class="contact-image">
             <img src="image/logo-icone.png" alt="OS_APP" class="img-fluid"/>
         </div>
@@ -97,11 +66,17 @@
         <div id="erro_email" class="alert alert-danger text-center" style="display:none;">
             <h5>Erro ao enviar o E-mail</h5>
         </div>
+        <!--ALERTA ERRO FORMULARIO-->
+        <div id="erro_form" class="alert alert-danger text-center" style="display:none;">
+            <h5>Erro preencha corretamente o formulário</h5>
+        </div>
         <!--ALERTA DE ERRO NA REQUISIÇÃO-->
         <div id="erro" class="alert alert-danger text-center" style="display:none;">
             <h5>ERRO COM SERVIDOR</h5>
             <p>Se persisitir contate um técnico</p>
         </div>
+
+        
         <div class="form">
             <h3><strong>Envie Sua Menssagem</strong></h3>
             <div class="row">
