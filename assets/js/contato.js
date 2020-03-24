@@ -20,16 +20,19 @@ $(document).ready(function () {
         msg = $('#msg_contato').val()
         ok = true
     
-        if(verificarnome(nome)) {$('#nome_contato').addClass('is-valid'); ok=true }
-        else {$('#nome_contato').addClass('is-invalid'); ok=false }
+        if(verificarnome(nome)) $('#nome_contato').addClass('is-valid')
+        else $('#nome_contato').addClass('is-invalid')
 
-        if(verificaremail(email)) {$('#email_contato').addClass('is-valid'); ok=true}
-        else {$('#email_contato').addClass('is-invalid'); ok=false }
+        if(verificaremail(email)) $('#email_contato').addClass('is-valid')
+        else $('#email_contato').addClass('is-invalid')
 
-        if(msg != "") {$('#msg_contato').addClass('is-valid'); ok=true }
-        else {$('#msg_contato').addClass('is-invalid'); ok=false}
+        if(msg != "") $('#msg_contato').addClass('is-valid')
+        else $('#msg_contato').addClass('is-invalid')
 
-        if(ok)
+        ok = $('input.is-invalid').length + $('textarea.is-invalid').length
+        console.log(ok)
+
+        if(ok == 0)
         {
             $.ajax({
                 url:"http://localhost/osapp/server/webservice.php",

@@ -35,7 +35,7 @@ $(document).ready(function()
         delMask()
         removervalidacao()
 
-        let nome, cpf, telefone, celular, rua, bairro, cidade, estado, cep, ok
+        let nome, cpf, telefone, celular, rua, bairro, cidade, estado, cep
 
         nome = $('#nome').val()
         cpf = $('#cpf').val()
@@ -46,37 +46,39 @@ $(document).ready(function()
         cidade = $('#cidades').val()
         estado = $('#estados').val()
         cep = $('#cep').val()
-        ok = true
-
-        if(verificarnome(nome)) {$('#nome').addClass('is-valid'); ok=true }
-        else {$('#nome').addClass('is-invalid'); ok=false }
-
-        if(verificarcpf(cpf)) {$('#cpf').addClass('is-valid'); ok=true }
-        else {$('#cpf').addClass('is-invalid'); ok=false }
-
-        if(verificartxt(telefone, 10)) {$('#telefone').addClass('is-valid'); ok=true }
-        else {$('#telefone').addClass('is-invalid'); ok=false}
-
-        if(verificartxt(celular, 11)) {$('#celular').addClass('is-valid'); ok=true }
-        else {$('#celular').addClass('is-invalid'); ok=false}
-
-        if(rua) {$('#rua').addClass('is-valid'); ok=true }
-        else {$('#rua').addClass('is-invalid'); ok=false }
-
-        if(bairro) {$('#bairro').addClass('is-valid'); ok=true }
-        else {$('#bairro').addClass('is-invalid'); ok=false }
-
-        if(estado) {$('#estados').addClass('is-valid'); ok= true }
-        else {$('#estados').addClass('is-invalid'); ok= false }
-
-        if(cidade) {$('#cidades').addClass('is-valid'); ok=true }
-        else {$('#cidades').addClass('is-invalid'); ok=false }
-
-        if(verificartxt(cep, 8)) {$('#cep').addClass('is-valid'); ok=true }
-        else {$('#cep').addClass('is-invalid'); ok=false }
 
 
-        if(ok)
+        if(verificarnome(nome)) $('#nome').addClass('is-valid')
+        else $('#nome').addClass('is-invalid')
+
+        if(verificarcpf(cpf)) $('#cpf').addClass('is-valid')
+        else $('#cpf').addClass('is-invalid')
+
+        if(verificartxt(telefone, 10)) $('#telefone').addClass('is-valid');
+        else $('#telefone').addClass('is-invalid')
+
+        if(verificartxt(celular, 11)) $('#celular').addClass('is-valid')
+        else $('#celular').addClass('is-invalid')
+
+        if(rua) $('#rua').addClass('is-valid')
+        else $('#rua').addClass('is-invalid')
+
+        if(bairro) $('#bairro').addClass('is-valid')
+        else $('#bairro').addClass('is-invalid')
+
+        if(estado) $('#estados').addClass('is-valid')
+        else $('#estados').addClass('is-invalid')
+
+        if(cidade) $('#cidades').addClass('is-valid')
+        else $('#cidades').addClass('is-invalid')
+
+        if(verificartxt(cep, 8)) $('#cep').addClass('is-valid')
+        else $('#cep').addClass('is-invalid')
+
+        let ok = $('input.is-invalid').length
+        console.log(ok)
+
+        if(ok == 0)
         {
             estado = estado.split(' ')[1]
             $.ajax({

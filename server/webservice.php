@@ -189,7 +189,6 @@ else if($tipo == "enviarEmail"){
     $conteudo = "<h3>{$dados['nome_contato']} </h3>";
     $conteudo .= "<h4>{$dados['email_contato']} </h4>";
     $conteudo .= "<p>{$dados['msg_contato']} </p>";
-
     $mail = new Email($conteudo);
     echo $mail->enviar();
 }
